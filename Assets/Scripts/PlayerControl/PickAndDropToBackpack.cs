@@ -1,4 +1,5 @@
 // Importa el namespace base de Unity (MonoBehaviour, GameObject, Transform, etc.)
+
 using UnityEngine;
 
 // Importa el Input System (InputAction, PlayerInput, callbacks, etc.)
@@ -10,31 +11,33 @@ using UnityEngine.InputSystem;
 public class PickAndDrop_InputSystem : MonoBehaviour
 {
     // Cabecera visual en el Inspector para agrupar campos
-    [Header("Empty hijo del Player")]
-
     // Campo serializado (se ve en el Inspector aunque sea private)
     // Aquí arrastras el Transform del Empty "Mochila"
-    [SerializeField] private Transform mochila;
+    [Header("Empty hijo del Player")] [SerializeField]
+    private Transform mochila;
 
     // Cabecera para el bloque de Input System en el Inspector
-    [Header("Input System")]
-
     // Tooltip: texto de ayuda que aparece al pasar el ratón por encima en el Inspector
     // InputActionReference: referencia directa a una acción del Input System (la acción "Soltar")
-    [Tooltip("Opcional: arrastra aquí la acción 'Soltar' (InputActionReference). Si lo dejas vacío, se busca por nombre en PlayerInput.")]
-    [SerializeField] private InputActionReference soltarActionRef;
+    [Header("Input System")]
+    [Tooltip(
+        "Opcional: arrastra aquí la acción 'Soltar' (InputActionReference). Si lo dejas vacío, se busca por nombre en PlayerInput.")]
+    [SerializeField]
+    private InputActionReference soltarActionRef;
+
 
     // Tooltip para explicar este campo
     // Si no usas soltarActionRef, se buscará una acción que se llame exactamente como esto: "Soltar"
-    [Tooltip("Nombre exacto de la acción en tu Input Actions Asset")]
-    [SerializeField] private string soltarActionName = "Soltar";
+    [Tooltip("Nombre exacto de la acción en tu Input Actions Asset")] [SerializeField]
+    private string soltarActionName = "Soltar";
 
     // Cabecera para ajustes de soltado
     [Header("Drop")]
 
     // Offset (desplazamiento) para soltar el objeto delante del player
     // (x=0, y=0.2, z=0.6) en espacio local del player
-    [SerializeField] private Vector3 dropOffset = new Vector3(0f, 0.2f, 0.6f);
+    [SerializeField]
+    private Vector3 dropOffset = new Vector3(0f, 0.2f, 0.6f);
 
     // Guarda el objeto que llevas dentro de la mochila (null si no llevas nada)
     private GameObject objetoEnMochila;
@@ -74,7 +77,8 @@ public class PickAndDrop_InputSystem : MonoBehaviour
 
         // Si no encontramos la acción, avisamos por consola para que lo arregles
         if (soltarAction == null)
-            Debug.LogError($"No se encontró la acción '{soltarActionName}'. Asigna soltarActionRef o añade PlayerInput con esa acción.");
+            Debug.LogError(
+                $"No se encontró la acción '{soltarActionName}'. Asigna soltarActionRef o añade PlayerInput con esa acción.");
     }
 
     // OnEnable se llama cada vez que el componente se activa (o al arrancar si está activo)
@@ -128,7 +132,11 @@ public class PickAndDrop_InputSystem : MonoBehaviour
         if (!go.CompareTag("Pick")) return;
 
         // Si no hay mochila asignada, error y salimos
-        if (mochila == null) { Debug.LogError("No hay mochila asignada."); return; }
+        if (mochila == null)
+        {
+            Debug.LogError("No hay mochila asignada.");
+            return;
+        }
 
         // Guardamos el objeto como el que está en la mochila
         objetoEnMochila = go;
