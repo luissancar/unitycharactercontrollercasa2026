@@ -6,6 +6,8 @@ TagManager:
   tags:
   - PlataformaMovil
   - Pick
+  - Palo
+  - Mano
   layers:
   - Default
   - TransparentFX

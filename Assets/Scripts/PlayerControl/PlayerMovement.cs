@@ -23,23 +23,31 @@ public class PlayerMovement : MonoBehaviour // Declara la clase PlayerMovement, 
     [SerializeField] private AudioSource audioSourcePasos;
     [SerializeField] private int minSpeed = 1; // velocidad mínima sonido pasos
 
+    
+    
+    private Animaciones animacion;
+    
+    
+    
+    
+    /// vertical velocity
+    public float VerticalSpeed => verticalVelocity;
 
     private void Awake() // Awake se ejecuta cuando el objeto se inicializa, antes de Start.
     {
         characterController =
             GetComponent<CharacterController>(); // Obtiene el CharacterController adjunto al mismo GameObject.
+        animacion = GameObject.FindObjectOfType<Animaciones>();
     }
 
     // INPUT SYSTEM (Send Messages) -> acción "Move"
-    private void
-        OnMove(InputValue value) // Método llamado automáticamente por PlayerInput cuando se activa la acción "Move".
+    private void OnMove(InputValue value) // Método llamado automáticamente por PlayerInput cuando se activa la acción "Move".
     {
         moveInput = value.Get<Vector2>(); // Convierte el valor de entrada en un Vector2 y lo guarda en moveInput.
     }
 
     // INPUT SYSTEM (Send Messages) -> acción "Jump"
-    private void
-        OnJump(InputValue value) // Método llamado automáticamente por PlayerInput cuando se activa la acción "Jump".
+    private void OnJump(InputValue value) // Método llamado automáticamente por PlayerInput cuando se activa la acción "Jump".
     {
         if (value.isPressed) // Comprueba si el botón de salto está presionado.
             jumpRequested = true; // Marca que se ha solicitado un salto; se usará en el siguiente Update.
@@ -52,8 +60,12 @@ public class PlayerMovement : MonoBehaviour // Declara la clase PlayerMovement, 
 
         HandleMovement(); // Llama al método que gestiona todo el movimiento del jugador.
         SonidoPasos();
+        
+        
     }
 
+    
+    
     private void HandleMovement() // Método que implementa la lógica de movimiento, salto y gravedad.
     {
         bool isGrounded = characterController.isGrounded; // Comprueba si el CharacterController está tocando el suelo.
@@ -68,8 +80,7 @@ public class PlayerMovement : MonoBehaviour // Declara la clase PlayerMovement, 
                 moveInput.y); // Crea un vector de movimiento en el espacio local (X y Z, sin Y).
 
         // Convertir de local a mundo según la orientación del player (yaw la controla PlayerLook)
-        Vector3
-            worldMove = transform
+        Vector3 worldMove = transform
                 .TransformDirection(
                     localMove); // Convierte el vector local a espacio global usando la rotación del jugador.
 
@@ -84,15 +95,22 @@ public class PlayerMovement : MonoBehaviour // Declara la clase PlayerMovement, 
         // Salto
         if (isGrounded && jumpRequested) // Si está en el suelo y se ha pedido un salto...
         {
-            audioSourceSalto.Play();
+            if (audioSourceSalto != null)
+                    audioSourceSalto.Play();
+            
+            /// animacion
+            ///
+           
+            animacion.TriggerSalto();
+            
+            
             verticalVelocity = Mathf.Sqrt(jumpHeight * -2f * gravity);
             // Calcula la velocidad vertical inicial necesaria para alcanzar la altura de salto deseada usando la fórmula de física.
             jumpRequested = false; // Resetea la petición de salto para no saltar varias veces con una sola pulsación.
         }
 
         // Gravedad
-        verticalVelocity +=
-            gravity * Time.deltaTime; // Aplica la gravedad acumulándola en la velocidad vertical cada frame.
+        verticalVelocity += gravity * Time.deltaTime; // Aplica la gravedad acumulándola en la velocidad vertical cada frame.
 
         Vector3 velocity = horizontalVelocity; // Comienza con la parte horizontal de la velocidad.
         velocity.y = verticalVelocity; // Añade la componente vertical (salto/caída).
@@ -108,7 +126,7 @@ public class PlayerMovement : MonoBehaviour // Declara la clase PlayerMovement, 
         // Velocidad horizontal (ignora saltos/caídas)
         Vector3 v = characterController.velocity;
         v.y = 0f;
-        Debug.Log(v.magnitude);
+    //    Debug.Log(v.magnitude);
 
         bool andando = characterController.isGrounded && v.magnitude > minSpeed;
 
